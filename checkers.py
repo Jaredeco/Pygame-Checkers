@@ -43,13 +43,21 @@ class Piece:
         y = BOARD.game[r][c].y + (SCREEN_WIDTH / dim) / 2
         return x, y
 
+    def skipped(self, i, j):
+        if abs(i - self.i) > 1 or abs(j - self.j) > 1:
+            r = self.i + (i - self.i) + (-1 if i - self.i > 0 else 1)
+            c = self.j + (j - self.j) + (-1 if j - self.j > 0 else 1)
+            BOARD.game[r][c].piece = None
+        else:
+            BOARD.turn = blue if BOARD.turn == red else red
+
     def move(self, i, j):
         if (i, j) in BOARD.av_pos and (i, j) != BOARD.av_pos[0]:
+            self.skipped(i, j)
             BOARD.game[self.i][self.j].piece = None
             x, y = self.coor_from_pos(i, j)
             self.x, self.y, self.i, self.j = x, y, i, j
             BOARD.game[i][j].piece = self
-            BOARD.turn = blue if BOARD.turn == red else red
             self._remove_highlight()
         else:
             self._remove_highlight()
@@ -82,7 +90,7 @@ class Position:
 
 class Board:
     def __init__(self):
-        self.turn = blue
+        self.turn = red
         self.av_pos = None
         dim = 8
         self.size = SCREEN_WIDTH // dim
@@ -124,7 +132,7 @@ class Board:
                     pos.append((r, c))
                 else:
                     rs, cs = self.available_pos(r, c, i)
-                    if self.is_valid(rs, cs) and self.game[rs][cs].piece is None:
+                    if self.game[r][c].piece.color != self.turn and self.is_valid(rs, cs) and self.game[rs][cs].piece is None:
                         pos.append((rs, cs))
         return pos
 
@@ -154,6 +162,10 @@ def redraw_win():
     pygame.display.flip()
 
 
+# Todo:
+#   -return positions until no skip
+#   -king functionality
+#   -maybe minimax
 BOARD = Board()
 RUN = True
 while RUN:
