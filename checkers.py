@@ -49,6 +49,7 @@ class Piece:
             BOARD.game[r][c].piece = None
             av_pos = [(a, b) for a, b in BOARD.available_pos(i, j) if abs(a - i) > 1 or abs(b - j) > 1]
             if len(av_pos):
+                BOARD.skipping = True
                 BOARD.av_pos = [(i, j)] + av_pos
                 BOARD.highlight_available()
             else:
@@ -66,7 +67,8 @@ class Piece:
             BOARD.game[i][j].piece = self
 
         else:
-            self._remove_highlight()
+            if not BOARD.skipping:
+                self._remove_highlight()
 
 
 class Position:
@@ -99,6 +101,7 @@ class Board:
         self.turn = red
         self.av_pos = None
         dim = 8
+        self.skipping = False
         self.size = SCREEN_WIDTH // dim
         self.game = [[] for i in range(dim)]
         for i in range(dim):
@@ -138,8 +141,7 @@ class Board:
                     pos.append((r, c))
                 else:
                     rs, cs = self.available_pos(r, c, i)
-                    if self.game[r][c].piece.color != self.turn and self.is_valid(rs, cs) and self.game[rs][
-                        cs].piece is None:
+                    if self.game[r][c].piece.color != self.turn and self.is_valid(rs, cs) and self.game[rs][cs].piece is None:
                         pos.append((rs, cs))
         return pos
 
@@ -160,6 +162,7 @@ class Board:
             piece.move(r, c)
 
     def change_turn(self):
+        self.skipping = False
         self.turn = blue if self.turn == red else red
 
     def winner(self):
