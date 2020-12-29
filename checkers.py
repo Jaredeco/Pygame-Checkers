@@ -32,8 +32,7 @@ class Piece:
 
     @staticmethod
     def _remove_highlight():
-        for r, c in BOARD.av_pos:
-            BOARD.game[r][c].highlight()
+        BOARD.highlight_available()
         BOARD.av_pos = None
 
     @staticmethod
@@ -48,17 +47,24 @@ class Piece:
             r = self.i + (i - self.i) + (-1 if i - self.i > 0 else 1)
             c = self.j + (j - self.j) + (-1 if j - self.j > 0 else 1)
             BOARD.game[r][c].piece = None
+            av_pos = [(a, b) for a, b in BOARD.available_pos(i, j) if abs(a - i) > 1 or abs(b - j) > 1]
+            if len(av_pos):
+                BOARD.av_pos = [(i, j)] + av_pos
+                BOARD.highlight_available()
+            else:
+                BOARD.change_turn()
         else:
-            BOARD.turn = blue if BOARD.turn == red else red
+            BOARD.change_turn()
 
     def move(self, i, j):
         if (i, j) in BOARD.av_pos and (i, j) != BOARD.av_pos[0]:
+            self._remove_highlight()
             self.skipped(i, j)
             BOARD.game[self.i][self.j].piece = None
             x, y = self.coor_from_pos(i, j)
             self.x, self.y, self.i, self.j = x, y, i, j
             BOARD.game[i][j].piece = self
-            self._remove_highlight()
+
         else:
             self._remove_highlight()
 
@@ -132,9 +138,14 @@ class Board:
                     pos.append((r, c))
                 else:
                     rs, cs = self.available_pos(r, c, i)
-                    if self.game[r][c].piece.color != self.turn and self.is_valid(rs, cs) and self.game[rs][cs].piece is None:
+                    if self.game[r][c].piece.color != self.turn and self.is_valid(rs, cs) and self.game[rs][
+                        cs].piece is None:
                         pos.append((rs, cs))
         return pos
+
+    def highlight_available(self):
+        for i, j in self.av_pos:
+            self.game[i][j].highlight()
 
     def select_move(self, r, c):
         if self.av_pos is None:
@@ -142,12 +153,14 @@ class Board:
             if piece is not None and piece.color == self.turn:
                 av_pos = self.available_pos(r, c)
                 self.av_pos = av_pos
-                for i, j in av_pos:
-                    self.game[i][j].highlight()
+                self.highlight_available()
         else:
             i, j = self.av_pos[0][0], self.av_pos[0][1]
             piece = self.game[i][j].piece
             piece.move(r, c)
+
+    def change_turn(self):
+        self.turn = blue if self.turn == red else red
 
     def winner(self):
         pass
