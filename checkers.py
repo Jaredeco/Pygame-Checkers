@@ -176,7 +176,6 @@ def redraw_win():
 
 
 # Todo:
-#   -return positions until no skip
 #   -king functionality
 #   -maybe minimax
 BOARD = Board()
