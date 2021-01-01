@@ -1,12 +1,12 @@
 import pygame
-from checkers.constants import SCREEN_WIDTH, SCREEN_HEIGHT, ICON, blue, red
+from checkers.globals import SCREEN_WIDTH, SCREEN_HEIGHT, ICON, blue, red
 from checkers.board import Board
 
 pygame.init()
 FPS = 60
 CLOCK = pygame.time.Clock()
 win = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption("checkers")
+pygame.display.set_caption("Checkers")
 pygame.display.set_icon(ICON)
 BOARD = Board()
 
@@ -19,7 +19,7 @@ def redraw_win():
 
 # Todo:
 #   -king functionality
-#   -maybe minimax
+#   -winner
 def main():
     RUN = True
     while RUN:

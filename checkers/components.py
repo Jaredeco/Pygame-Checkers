@@ -1,6 +1,6 @@
 import pygame
 from pygame import gfxdraw
-from checkers.constants import CROWN, SCREEN_WIDTH, blue, red, green
+from checkers.globals import CROWN, SCREEN_WIDTH, blue, red, green
 
 
 class Position:
@@ -62,7 +62,8 @@ class Piece:
             r = self.i + (i - self.i) + (-1 if i - self.i > 0 else 1)
             c = self.j + (j - self.j) + (-1 if j - self.j > 0 else 1)
             board.game[r][c].piece = None
-            av_pos = [(a, b) for a, b in board.available_pos(i, j) if abs(a - i) > 1 or abs(b - j) > 1]
+            av_pos = [(a, b) for a, b in board.available_pos(i, j, None, self.is_king)
+                      if abs(a - i) > 1 or abs(b - j) > 1]
             if len(av_pos):
                 board.skipping = True
                 board.av_pos = [(i, j)] + av_pos

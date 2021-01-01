@@ -1,4 +1,4 @@
-from checkers.constants import SCREEN_WIDTH, blue, red, black, white
+from checkers.globals import SCREEN_WIDTH, blue, red, black, white
 from checkers.components import Position, Piece
 
 
@@ -35,9 +35,12 @@ class Board:
             return True
         return False
 
-    def available_pos(self, i, j, idx=None):
+    def available_pos(self, i, j, idx=None, is_king=None):
+        if is_king is None:
+            is_king = self.game[i][j].piece.is_king
         av_pos = [(i + 1, j + 1), (i + 1, j - 1), (i - 1, j + 1), (i - 1, j - 1)]
-        av_pos = av_pos[:2] if self.turn == blue else av_pos[2:]
+        if not is_king:
+            av_pos = av_pos[:2] if self.turn == blue else av_pos[2:]
         if idx is not None:
             return av_pos[idx]
         pos = [(i, j)]
@@ -46,7 +49,7 @@ class Board:
                 if self.game[r][c].piece is None:
                     pos.append((r, c))
                 else:
-                    rs, cs = self.available_pos(r, c, i)
+                    rs, cs = self.available_pos(r, c, i, is_king)
                     if self.game[r][c].piece.color != self.turn and self.is_valid(rs, cs) and self.game[rs][
                         cs].piece is None:
                         pos.append((rs, cs))

@@ -1,2 +1,2 @@
 # Pygame-Checkers
-The game checkers made with python-pygame.
+Simple pygame ui for game checkers.
