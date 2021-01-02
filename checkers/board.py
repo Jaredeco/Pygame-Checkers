@@ -6,13 +6,14 @@ class Board:
     def __init__(self):
         self.turn = red
         self.av_pos = None
+        self.winner = None
         dim = 8
         self.skipping = False
         self.size = SCREEN_WIDTH // dim
         self.game = [[] for i in range(dim)]
         for i in range(dim):
             for j in range(dim):
-                pos = Position(self.size * j + 2, self.size * i + 2, i, j,
+                pos = Position(self.size * j+2, self.size * i+2, i, j,
                                white if (not j % 2 and not i % 2) or (j % 2 and i % 2) else black, None)
                 if (not i % 2 and j % 2 and (5 <= i or i <= 2)) or (i % 2 and not j % 2 and (5 <= i or i <= 2)):
                     pos.piece = Piece(pos.x + (SCREEN_WIDTH / dim / 2), pos.y + (SCREEN_WIDTH / dim) / 2, i, j,
@@ -60,6 +61,8 @@ class Board:
             self.game[i][j].highlight()
 
     def select_move(self, r, c):
+        if not self.is_valid(r, c):
+            return
         if self.av_pos is None:
             piece = self.game[r][c].piece
             if piece is not None and piece.color == self.turn:
@@ -75,8 +78,15 @@ class Board:
         self.skipping = False
         self.turn = blue if self.turn == red else red
 
-    def winner(self):
-        pass
+    def is_winner(self):
+        for i in range(len(self.game)):
+            for j in range(len(self.game[0])):
+                piece = self.game[i][j].piece
+                if piece is not None:
+                    av_pos = self.available_pos(i, j)
+                    if len(av_pos) > 1 and piece.color == self.turn:
+                        return
+        self.winner = red if self.turn == blue else blue
 
-    def reset(self):
+    def restart(self):
         self.__init__()
