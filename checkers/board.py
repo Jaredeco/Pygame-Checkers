@@ -1,10 +1,10 @@
-from checkers.globals import SCREEN_WIDTH, blue, red, black, white
+from checkers.globals import SCREEN_WIDTH, black, white, brown, light_brown
 from checkers.components import Position, Piece
 
 
 class Board:
     def __init__(self):
-        self.turn = red
+        self.turn = black
         self.av_pos = None
         self.winner = None
         dim = 8
@@ -14,10 +14,10 @@ class Board:
         for i in range(dim):
             for j in range(dim):
                 pos = Position(self.size * j+2, self.size * i+2, i, j,
-                               white if (not j % 2 and not i % 2) or (j % 2 and i % 2) else black, None)
+                               light_brown if (not j % 2 and not i % 2) or (j % 2 and i % 2) else brown, None)
                 if (not i % 2 and j % 2 and (5 <= i or i <= 2)) or (i % 2 and not j % 2 and (5 <= i or i <= 2)):
                     pos.piece = Piece(pos.x + (SCREEN_WIDTH / dim / 2), pos.y + (SCREEN_WIDTH / dim) / 2, i, j,
-                                      blue if i <= 2 else red)
+                                      white if i <= 2 else black)
                 self.game[i].append(pos)
 
     def draw(self, win):
@@ -41,7 +41,7 @@ class Board:
             is_king = self.game[i][j].piece.is_king
         av_pos = [(i + 1, j + 1), (i + 1, j - 1), (i - 1, j + 1), (i - 1, j - 1)]
         if not is_king:
-            av_pos = av_pos[:2] if self.turn == blue else av_pos[2:]
+            av_pos = av_pos[:2] if self.turn == white else av_pos[2:]
         if idx is not None:
             return av_pos[idx]
         pos = [(i, j)]
@@ -76,7 +76,7 @@ class Board:
 
     def change_turn(self):
         self.skipping = False
-        self.turn = blue if self.turn == red else red
+        self.turn = white if self.turn == black else black
 
     def is_winner(self):
         for i in range(len(self.game)):
@@ -86,7 +86,7 @@ class Board:
                     av_pos = self.available_pos(i, j)
                     if len(av_pos) > 1 and piece.color == self.turn:
                         return
-        self.winner = red if self.turn == blue else blue
+        self.winner = black if self.turn == white else white
 
     def restart(self):
         self.__init__()

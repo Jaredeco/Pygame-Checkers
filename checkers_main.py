@@ -1,5 +1,5 @@
 import pygame
-from checkers.globals import SCREEN_WIDTH, SCREEN_HEIGHT, ICON, blue, red, white
+from checkers.globals import SCREEN_WIDTH, SCREEN_HEIGHT, ICON,  black, white, green
 from checkers.board import Board
 from time import sleep
 pygame.init()
@@ -15,12 +15,12 @@ BOARD = Board()
 
 def redraw_win(winner):
     if winner is None:
-        win.fill(blue if BOARD.turn == blue else red)
+        win.fill(white if BOARD.turn == white else black)
         BOARD.draw(win)
     else:
-        win.fill(white)
-        text = "Red player won!" if winner == red else "Blue player won!"
-        winner_text = FONT.render(text, True, winner)
+        win.fill(winner)
+        text = "Black player won!" if winner == black else "White player won!"
+        winner_text = FONT.render(text, True, green)
         win.blit(winner_text, winner_text.get_rect(center=win.get_rect().center))
         pygame.display.flip()
         sleep(3)

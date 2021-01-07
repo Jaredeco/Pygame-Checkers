@@ -1,6 +1,6 @@
 import pygame
 from pygame import gfxdraw
-from checkers.globals import CROWN, SCREEN_WIDTH, blue, red, green
+from checkers.globals import CROWN, SCREEN_WIDTH, black, white,  green
 
 
 class Position:
@@ -10,7 +10,7 @@ class Position:
         self.i = i
         self.j = j
         self.color = color
-        self.piece = piece
+        self.piece = piece  
         self.size = SCREEN_WIDTH / 8
         self.highlighted = False
 
@@ -74,7 +74,7 @@ class Piece:
             board.change_turn()
 
     def king(self, i):
-        if (self.color == red and i == 0) or (self.color == blue and i == 7):
+        if (self.color == black and i == 0) or (self.color == white and i == 7):
             self.is_king = True
 
     def move(self, board, i, j):
